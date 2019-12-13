@@ -1,1 +1,9 @@
-!string<<^Max;
+!int<<^Max<-32;
+!string<<^Maxx<-DSA;
+!bool<<^Maxxx<-YES;
+!char<<^Maxxxx<-s;
+^Max<-2;
+^Maxx<-MESTER;
+^Maxxx<-NO;
+^Maxxxx<-b;
+
