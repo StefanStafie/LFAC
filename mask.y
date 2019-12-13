@@ -39,13 +39,14 @@ struct expr_info* expr_ptr;
 
 %token <intval>TIP_CHAR TIP_STRING TIP_INT TIP_BOOL TIP_FLOAT TIP_CLASS IF_CLAUSE FOR_CLAUSE WHILE_CLAUSE  APEL CONSTANT FUN  NR PLUS MINUS MUL DIV  STRLENGTH
 //%token <floatval>FLOATT nu avem terminalul FLOATT. Folosim NR ',' NR si construim numarul float in functia de creare_float_expr
-%token <boolval>SMALLER EQUAL AND OR BIGGER BOOL
+%token <boolval>SMALLER EQUAL AND OR BIGGER BOOL 
 %token <strval>LITEREE 
 %token <charval>LITERA
 %token <expr_info>STRCPY STRCAT ID_VAR
-%type <expr_info>instructiune declarare atribuire parametru parametru_nr parametru_char numeric
-%type <intval>aritmetic numeric
-%type <strval> parametru
+%type <intval> operand
+%type <boolval> conditie conditie_bool conditie_nr lista_conditii
+%type <expr_info>instructiune declarare atribuire parametru parametru_nr parametru_char numeric aritmetic
+
 
 %start s
 %%
@@ -55,7 +56,7 @@ s	: instructiuni {printf("input acceptat\n");}
 instructiuni	: instructiune instructiuni
 		| instructiune
 		;
-instructiune 	: CONSTANT declarare //constante
+instructiune 	: CONSTANT declarare {$$ = create_int_expr(24);} //constante
 		| declarare //variabile
 		| atribuire		
 		| clauza //if for while
@@ -80,7 +81,7 @@ lista_declarare	: declarare lista_declarare
 		| CONSTANT declarare
 		;
 atribuire	: ID_VAR '<' '-' numeric ';'  {printf("%s<-%d\n",$1,$4);} //numeric
-		|ID_VAR '<' '-' parametru ';'  {printf("%s<-%s\n",$<strval>1,$<strval>4);} //strings
+		| ID_VAR '<' '-' parametru ';'  {printf("%s<-%s\n",$<strval>1,$<strval>4);} //strings
 		| ID_VAR '<' '-' '%' arrayN '%' ';' //array
 		| ID_VAR '<' '-' '%' arrayS '%' ';' //array
 		;
@@ -90,10 +91,14 @@ lista_atribuiri	: lista_atribuiri atribuire
 
 		;
 arrayN	: numeric ',' arrayN
+	| ID_VAR ',' arrayN
+	| ID_VAR
 	| numeric
 	;
-arrayS : parametru ',' arrayS
-	| parametru
+arrayS 	: LITEREE ',' arrayS
+	| LITEREE
+	| ID_VAR ',' arrayS	
+	| ID_VAR
 	;
 
 clauza	: IF_CLAUSE '<' '<' lista_conditii '>' '>' '%' instructiuni '%'
@@ -107,34 +112,45 @@ lista_conditii	: lista_conditii AND conditie
 		| lista_conditii OR conditie
 		| conditie
 		;
-conditie	: parametru BIGGER parametru
-		| parametru SMALLER parametru
-		| parametru EQUAL parametru
-		| numeric BIGGER numeric
-		| numeric SMALLER numeric
-		| numeric EQUAL numeric
+conditie	:conditie_bool
+		|conditie_nr
 		;
+conditie_bool	: conditie_bool AND booleana
+		| conditie_bool OR booleana
+		| booleana 
+		;
+booleana: BOOL
+	| ID_VAR
+	;
+
+conditie_nr	: operand BIGGER operand
+		| operand SMALLER operand
+		| operand EQUAL operand
+		;
+operand	: aritmetic
+	| ID_VAR
+	;
 lista_parametri : lista_parametri ';' parametru
 		| parametru
 		;
 parametru	: parametru_char
 		| parametru_nr
+		| ID_VAR
 		;
-parametru_char	: ID_VAR //{printf("you shouldn't be here");}
+parametru_char	: LITERA {$$=$1;} 
 		| LITEREE {$$=$1;}
-		| LITERA {$$=$1;}
 		;
-parametru_nr	: ID_VAR //{printf("you shouldn't be here");}
-		| NR {$$=$1;}
+parametru_nr	: NR {$$=$1;} 
 		;
+
 numeric : aritmetic {$$=$1;}
-	| BOOL {$$=$1;}
+	| BOOL {$$=create_bool_expr($1);}
 	;
-aritmetic	: aritmetic PLUS parametru_nr {$$=$1+$3;}
-		| aritmetic MINUS parametru_nr {$$=$1-$3;}
-		| aritmetic MUL parametru_nr {$$=$1*$3;}
-		| aritmetic DIV parametru_nr {$$=$1/$3;}
-		| parametru_nr {$$=$1;}//printf("%d\n",$1);}
+aritmetic	: aritmetic PLUS ID_VAR {$$=create_int_expr($1->intvalue + $3->intvalue);}
+		| aritmetic MINUS ID_VAR {$$=create_int_expr($1->intvalue - $3->intvalue);}
+		| aritmetic MUL ID_VAR {$$=create_int_expr($1->intvalue * $3->intvalue);}
+		| aritmetic DIV ID_VAR {$$=create_int_expr($1->intvalue / $3->intvalue);}
+		| ID_VAR {$$=create_int_expr($1->intvalue);} //printf("%d\n",$1);}
 		;
 functie	: id_functie ';' lista_parametri  
 	| STRCPY ID_VAR ';' ID_VAR
