@@ -37,8 +37,8 @@ float floatval;
 struct expr_info* expr_ptr;
 }
 
-%token <intval>TIP_INT TIP_BOOL TIP_CLASS IF_CLAUSE FOR_CLAUSE WHILE_CLAUSE BIGGER SMALLER EQUAL AND OR APEL CONSTANT FUN  NR BOOL PLUS MINUS MUL DIV
-%token <fltval>TIP_FLOAT FLOATT 
+%token <intval>TIP_INT TIP_BOOL TIP_CLASS IF_CLAUSE FOR_CLAUSE WHILE_CLAUSE BIGGER SMALLER EQUAL AND OR APEL CONSTANT FUN  NR BOOL PLUS MINUS MUL DIV TIP_FLOAT 
+%token <floatval>FLOATT 
 %token <strval>TIP_CHAR TIP_STRING STRCPY STRCAT STRLENGTH ID_VAR LITERA LITEREE 
 %type <intval>aritmetic numeric 
 %type <strval> parametru
@@ -58,11 +58,11 @@ instructiune 	: CONSTANT declarare //constante
 		| APEL functie //apelarea functiilor predefinite si cele create
 		| FUN id_functie '<' '(' lista_declarare ')' '>' '%'instructiuni '%' //creare functii 
 		;
-declarare	:  TIP_INT '<' '<' ID_VAR ';' {printf("%s << %s\n",$<strval>1,$<strval>4);}//  //declarare simpla {}
-		|  TIP_FLOAT '<' '<' ID_VAR ';' {printf("%s << %s\n",$<strval>1,$<strval>4);}
-		|  TIP_CHAR '<' '<' ID_VAR ';' {printf("%s << %s\n",$<strval>1,$<strval>4);}
-		|  TIP_STRING '<' '<' ID_VAR ';' {printf("%s << %s\n",$<strval>1,$<strval>4);}
-		|  TIP_BOOL '<' '<' ID_VAR ';'{printf("%s << %s\n",$<strval>1,$<strval>4);}
+declarare	:  TIP_INT '<' '<' ID_VAR ';' {printf("%d << %s\n",$<intval>1,$<strval>4);}//  //declarare simpla {}
+		|  TIP_FLOAT '<' '<' ID_VAR ';' {printf("%d << %s\n",$1,$<strval>4);}
+		|  TIP_CHAR '<' '<' ID_VAR ';' {printf("%d << %s\n",$1,$<strval>4);}
+		|  TIP_STRING '<' '<' ID_VAR ';' {printf("%d << %s\n",$1,$<strval>4);}
+		|  TIP_BOOL '<' '<' ID_VAR ';'{printf("%d << %s\n",$1,$<strval>4);}
 		|  TIP_INT '<' '<' atribuire //declarare + atribuire
 		|  TIP_FLOAT '<' '<' atribuire
 		|  TIP_CHAR '<' '<' atribuire
@@ -113,9 +113,9 @@ conditie	: parametru BIGGER parametru
 lista_parametri : lista_parametri ';' parametru
 		| parametru
 		;
-parametru	: ID_VAR {$$ = cauta_expr($1);}//{printf("you shouldn't be here");}
-		| LITEREE {$$=create_str_expr($1, NULL); free($1);}
-		| LITERA {$$=create_char_expr($1, NULL); free($1);}
+parametru	: ID_VAR //{printf("you shouldn't be here");}
+		| LITEREE {$$=$1;}
+		| LITERA {$$=$1;}
 		;
 numeric : aritmetic {$$=$1;}
 	| BOOL {$$=$1;}
@@ -138,7 +138,6 @@ functie	: id_functie ';' lista_parametri
 id_functie	: '!' ID_VAR
 		;
 %%
-
 expr_info* create_int_expr(int value)
 {
        
@@ -232,3 +231,4 @@ int main(int argc, char** argv){
  yyin=fopen(argv[1],"r");
  yyparse();
 }
+
