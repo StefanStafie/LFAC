@@ -43,9 +43,8 @@ struct expr_info* expr_ptr;
 %token <strval>LITEREE 
 %token <charval>LITERA
 %token <expr_info>STRCPY STRCAT ID_VAR
-%type <intval> operand
-%type <boolval> conditie conditie_bool conditie_nr lista_conditii
-%type <expr_info>instructiune declarare atribuire parametru parametru_nr parametru_char numeric aritmetic
+%type <boolval> conditie  lista_conditii
+%type <expr_info>instructiune declarare atribuire parametru numeric aritmetic
 
 
 %start s
@@ -81,7 +80,8 @@ lista_declarare	: declarare lista_declarare
 		| CONSTANT declarare
 		;
 atribuire	: ID_VAR '<' '-' numeric ';'  {printf("%s<-%d\n",$1,$4);} //numeric
-		| ID_VAR '<' '-' parametru ';'  {printf("%s<-%s\n",$<strval>1,$<strval>4);} //strings
+		| ID_VAR '<' '-' LITEREE ';'  {printf("%s<-%s\n",$<strval>1,$<strval>4);} //strings
+		| ID_VAR '<' '-' LITERA
 		| ID_VAR '<' '-' '%' arrayN '%' ';' //array
 		| ID_VAR '<' '-' '%' arrayS '%' ';' //array
 		;
@@ -91,14 +91,11 @@ lista_atribuiri	: lista_atribuiri atribuire
 
 		;
 arrayN	: numeric ',' arrayN
-	| ID_VAR ',' arrayN
-	| ID_VAR
 	| numeric
 	;
-arrayS 	: LITEREE ',' arrayS
-	| LITEREE
-	| ID_VAR ',' arrayS	
-	| ID_VAR
+
+arrayS 	: LITEREE ',' arrayS	
+	| LITEREE	
 	;
 
 clauza	: IF_CLAUSE '<' '<' lista_conditii '>' '>' '%' instructiuni '%'
@@ -108,43 +105,31 @@ clauza	: IF_CLAUSE '<' '<' lista_conditii '>' '>' '%' instructiuni '%'
 	| FOR_CLAUSE '<' '<' ';' lista_conditii ';'  '>' '>' '%' instructiuni '%'
 	| WHILE_CLAUSE '<' '<' lista_conditii '>' '>' '%' instructiuni '%'
 	;
-lista_conditii	: lista_conditii AND conditie
-		| lista_conditii OR conditie
+lista_conditii	: '(' lista_conditii ')' AND '(' conditie ')'
+		| '(' lista_conditii ')' OR '(' conditie ')'
 		| conditie
 		;
-conditie	:conditie_bool
-		|conditie_nr
-		;
-conditie_bool	: conditie_bool AND booleana
-		| conditie_bool OR booleana
-		| booleana 
+conditie	: booleana
+		| conditie_nr
 		;
 booleana: BOOL
 	| ID_VAR
 	;
-
-conditie_nr	: operand BIGGER operand
-		| operand SMALLER operand
-		| operand EQUAL operand
+conditie_nr	: aritmetic BIGGER aritmetic
+		| aritmetic SMALLER aritmetic
+		| aritmetic EQUAL aritmetic
 		;
-operand	: aritmetic
-	| ID_VAR
-	;
+
 lista_parametri : lista_parametri ';' parametru
 		| parametru
 		;
-parametru	: parametru_char
-		| parametru_nr
+parametru	: NR
+		| LITERA
+		| LITEREE
 		| ID_VAR
-		;
-parametru_char	: LITERA {$$=$1;} 
-		| LITEREE {$$=$1;}
-		;
-parametru_nr	: NR {$$=$1;} 
 		;
 
 numeric : aritmetic {$$=$1;}
-	| BOOL {$$=create_bool_expr($1);}
 	;
 aritmetic	: aritmetic PLUS ID_VAR {$$=create_int_expr($1->intvalue + $3->intvalue);}
 		| aritmetic MINUS ID_VAR {$$=create_int_expr($1->intvalue - $3->intvalue);}
