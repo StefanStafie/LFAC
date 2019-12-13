@@ -19,7 +19,7 @@
 	!bool<<^Mae<-%2314%;
 #
 
-!class<<^Mae#/*creare clasa*/
+!class<<^Mae#           /*creare clasa*/
 	!int<<^Mar<-323;
 	!bool<<^Mae<-%2314%;
 	!char<<^Mae;
@@ -33,7 +33,7 @@
 !if<< ^Msda !< ^Mae >> %                     /*verif if*/
 	!bool<<^Mae<-%2314%;
 	!while<<^Msda!<^Mae>> %            /*verif while*/
-		!for<< !char<<^Mae; ;^Mae!==^Dax ; ^Mar<-YES; >> %/*verif for*/
+		!for<< !char<<^Mae; ;^Mae!==^Dax ; ^Mar<-YES; >> %          /*verif for*/
 			^Mar<-NO;
 		%
 	%
