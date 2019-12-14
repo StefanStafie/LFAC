@@ -15,9 +15,10 @@ typedef struct expr_info {
 } expr_info;
 
 
-expr_info** master;
+expr_info* master[100];
+int k=0;
 void update_master(expr_info* expr);
-
+expr_info* search( char* name);
 expr_info* create_int_expr(int value);
 expr_info* create_str_expr(char* value1, char* value2);
 expr_info* create_char_expr(char value);
@@ -37,32 +38,37 @@ float floatval;
 struct expr_info* expr_ptr;
 }
 
-%token <intval>TIP_INT TIP_BOOL TIP_CLASS IF_CLAUSE FOR_CLAUSE WHILE_CLAUSE BIGGER SMALLER EQUAL AND OR APEL CONSTANT FUN  NR BOOL PLUS MINUS MUL DIV TIP_FLOAT 
-%token <floatval>FLOATT 
-%token <strval>TIP_CHAR TIP_STRING STRCPY STRCAT STRLENGTH ID_VAR LITERA LITEREE 
-%type <intval>aritmetic numeric 
-%type <strval> parametru
-%type <expr_ptr> declarare atribuire 
+%token <intval>TIP_CHAR TIP_STRING TIP_INT TIP_BOOL TIP_FLOAT TIP_CLASS IF_CLAUSE FOR_CLAUSE WHILE_CLAUSE  APEL CONSTANT FUN  NR PLUS MINUS MUL DIV  STRLENGTH 
+//%token <floatval>FLOATT nu avem terminalul FLOATT. Folosim NR ',' NR si construim numarul float in functia de creare_float_expr
+%token <boolval>SMALLER EQUAL AND OR BIGGER BOOL 
+%token <strval>LITEREE ID_VAR
+%token <charval>LITERA
+%token <expr_ptr>STRCPY STRCAT 
+%type <boolval> conditie  lista_conditii
+%type <expr_ptr>instructiune declarare atribuire parametru 
+%type <intval> numeric aritmetic
+
+
 %start s
 %%
 
-s	: instructiuni {printf("input acceptat\n");}
+s	: instructiuni {printf("input acceptat\n"); printf("%s<=%d",master[0]->path,master[0]->intvalue);} }
 	;
 instructiuni	: instructiune instructiuni
 		| instructiune
 		;
-instructiune 	: CONSTANT declarare //constante
+instructiune 	: CONSTANT declarare {$$ = create_int_expr(24);} //constante
 		| declarare //variabile
 		| atribuire		
 		| clauza //if for while
 		| APEL functie //apelarea functiilor predefinite si cele create
 		| FUN id_functie '<' '(' lista_declarare ')' '>' '%'instructiuni '%' //creare functii 
 		;
-declarare	:  TIP_INT '<' '<' ID_VAR ';' {printf("%d << %s\n",$<intval>1,$<strval>4);}//  //declarare simpla {}
-		|  TIP_FLOAT '<' '<' ID_VAR ';' {printf("%d << %s\n",$1,$<strval>4);}
-		|  TIP_CHAR '<' '<' ID_VAR ';' {printf("%d << %s\n",$1,$<strval>4);}
-		|  TIP_STRING '<' '<' ID_VAR ';' {printf("%d << %s\n",$1,$<strval>4);}
-		|  TIP_BOOL '<' '<' ID_VAR ';'{printf("%d << %s\n",$1,$<strval>4);}
+declarare	:  TIP_INT '<' '<' ID_VAR ';' //  //declarare simpla {}
+		|  TIP_FLOAT '<' '<' ID_VAR ';' 
+		|  TIP_CHAR '<' '<' ID_VAR ';' 
+		|  TIP_STRING '<' '<' ID_VAR ';' 
+		|  TIP_BOOL '<' '<' ID_VAR ';'
 		|  TIP_INT '<' '<' atribuire //declarare + atribuire
 		|  TIP_FLOAT '<' '<' atribuire
 		|  TIP_CHAR '<' '<' atribuire
@@ -72,13 +78,15 @@ declarare	:  TIP_INT '<' '<' ID_VAR ';' {printf("%d << %s\n",$<intval>1,$<strval
 		;
 lista_declarare	: declarare lista_declarare
 		| CONSTANT declarare lista_declarare
-	      	| declarare
+		| declarare
 		| CONSTANT declarare
 		;
-atribuire	: ID_VAR '<' '-' numeric ';'  {printf("%s<-%d\n",$1,$4);} //numeric
-		|ID_VAR '<' '-' parametru ';'  {printf("%s<-%s\n",$<strval>1,$<strval>4);} //strings
+atribuire	: ID_VAR '<' '-' numeric ';' { $$=create_int_expr($4);$$->path=strdup($1);master[k++]=$$; printf("%s<-%d\n",$$->path,$$->intvalue);  } //numeric 
+		| ID_VAR '<' '-' LITEREE ';'  //strings
+		| ID_VAR '<' '-' LITERA ';'
 		| ID_VAR '<' '-' '%' arrayN '%' ';' //array
 		| ID_VAR '<' '-' '%' arrayS '%' ';' //array
+		| ID_VAR '<' '-' BOOL ';'
 		;
 lista_atribuiri	: lista_atribuiri atribuire
 		| atribuire
@@ -88,8 +96,9 @@ lista_atribuiri	: lista_atribuiri atribuire
 arrayN	: numeric ',' arrayN
 	| numeric
 	;
-arrayS : parametru ',' arrayS
-	| parametru
+
+arrayS 	: LITEREE ',' arrayS	
+	| LITEREE	
 	;
 
 clauza	: IF_CLAUSE '<' '<' lista_conditii '>' '>' '%' instructiuni '%'
@@ -99,39 +108,42 @@ clauza	: IF_CLAUSE '<' '<' lista_conditii '>' '>' '%' instructiuni '%'
 	| FOR_CLAUSE '<' '<' ';' lista_conditii ';'  '>' '>' '%' instructiuni '%'
 	| WHILE_CLAUSE '<' '<' lista_conditii '>' '>' '%' instructiuni '%'
 	;
-lista_conditii	: lista_conditii AND conditie
-		| lista_conditii OR conditie
+lista_conditii	: '(' lista_conditii ')' AND '(' conditie ')'
+		| '(' lista_conditii ')' OR '(' conditie ')'
 		| conditie
 		;
-conditie	: parametru BIGGER parametru
-		| parametru SMALLER parametru
-		| parametru EQUAL parametru
-		| numeric BIGGER numeric
-		| numeric SMALLER numeric
-		| numeric EQUAL numeric
-		| BOOL 
+conditie	: booleana
+		| conditie_nr
 		;
+booleana: BOOL
+	| ID_VAR
+	;
+conditie_nr	: aritmetic BIGGER aritmetic
+		| aritmetic SMALLER aritmetic
+		| aritmetic EQUAL aritmetic
+		;
+
 lista_parametri : lista_parametri ';' parametru
 		| parametru
 		;
-parametru	: ID_VAR //{printf("you shouldn't be here");}
-		| LITEREE {$$=$1;}
-		| LITERA {$$=$1;}
-		;
-numeric : aritmetic {$$=$1;}
-	| BOOL {$$=$1;}
-	;
-		;
-aritmetic	: aritmetic PLUS NR {$$=$1+$3;}
-		| aritmetic MINUS NR {$$=$1-$3;}
-		| aritmetic MUL NR {$$=$1*$3;}
-		| aritmetic DIV NR {$$=$1/$3;}
-		| aritmetic PLUS ID_VAR
-		| aritmetic MINUS ID_VAR
-		| aritmetic DIV ID_VAR
-		| aritmetic MUL ID_VAR
-	
+parametru	: NR
+		| LITERA
+		| LITEREE
 		| ID_VAR
+		;
+
+numeric : aritmetic {$$=$1;}
+	;
+aritmetic	: aritmetic PLUS ID_VAR 
+		| aritmetic MINUS ID_VAR 
+		| aritmetic MUL ID_VAR 
+		| aritmetic DIV ID_VAR 
+		| aritmetic PLUS NR {$$=$1+$3;}
+		| aritmetic MINUS NR {$$=$1-$3;}
+		| aritmetic DIV NR {$$=$1/$3;}
+		| aritmetic MUL NR {$$=$1*$3;}
+		| ID_VAR 
+		| NR {$$=$1;}
 		;
 functie	: id_functie ';' lista_parametri  
 	| STRCPY ID_VAR ';' ID_VAR
@@ -204,8 +216,6 @@ void free_expr(expr_info* expr)
   free(expr->path);
   free(expr);
 }
-
-
 void print_expr(expr_info* expr)
 {
    if(expr->type == 1) 
@@ -217,16 +227,28 @@ void print_expr(expr_info* expr)
 		printf("Str expr with value: %s", expr->strvalue);	
 	 }else{
 		if(expr->type == 3){
-			printf("Str expr with value: %d ", expr->boolvalue);	
+			printf("Bool expr with value: %d ", expr->boolvalue);	
 		 }else{
 			if(expr->type == 4){
-				printf("Str expr with value: %c", expr->charvalue);	
+				printf("char expr with value: %c", expr->charvalue);	
 			 }else{
-				printf("Str expr with value: %f", expr->floatvalue);
+				printf("float expr with value: %f", expr->floatvalue);
 			}
 		}	
 	}
    }
+}
+
+expr_info* search (char * name)
+{
+	int i=0;
+	while (i<=k)
+	 {if(master[i]->path==name)
+	 	return master[i];
+		 i++;
+	 }
+	 return NULL;
+
 }
 
 int yyerror(char * s){
@@ -237,3 +259,4 @@ int main(int argc, char** argv){
  yyin=fopen(argv[1],"r");
  yyparse();
 }
+
