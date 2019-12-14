@@ -1,0 +1,40 @@
+//redeclarare
+
+!int<<^Ia<-32;
+!int<<^Ia<-32;
+
+!char<<^Ca<-!C s;
+!char<<^Ca<-!C a;
+
+!string<<^Sa<-!strcpy ASJDcd;
+!string<<^Sa<-!strcpy FDsvsa;
+
+!float<<^Fa<-!F 32,2;
+!float<<^Fa<-!F 32,6;
+
+!bool<<^Ba<-!B YES;
+!bool<<^Ba<-!B NO;
+
+
+// tip dreapta nu se potriveste cu stanga
+
+!int<<^Ia<-32;
+!string<<^Sa<-!strcpy ^Ia;
+
+
+//variabila din dreapta egalului nu exista   ^_b nu a fost declarat
+
+!int<<^Ia<-^Ib;
+
+!char<<^Ca<-!C ^Cb;
+
+!string<<^Sa<-!strcpy ^Sb;
+
+!float<<^Fa<-!F ^Fb;
+
+!bool<<^Ba<-!B ^Bb;
+
+
+// variabila nu a fost declarata inainte de atribuire
+
+^Ia<-32;
