@@ -2,8 +2,12 @@
 !string<<^Maxx<-DSA;
 !bool<<^Maxxx<-YES;
 !char<<^Maxxxx<-s;
+!float<<^Jmeker<-32,12;
+!string<<^Test<-%sdawsd & sdasd%;
+!string<<^Teste<-%123 & 2312 & asda & dsdw%;
 ^Max<-2;
 ^Maxx<-MESTER;
 ^Maxxx<-NO;
 ^Maxxxx<-b;
+
 
