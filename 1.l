@@ -34,7 +34,7 @@ id [a-zA-Z][a-zA-Z0-9]*
 "YES" {yylval.intval=1;return BOOL;}
 "NO" {yylval.intval=0;return BOOL;}
 "^"[A-Z][a-z]* {yylval.strval=strdup(yytext);return ID_VAR;}
-[A-Za-z] {yylval.charval=(strdup(yytext)[0]);return LITERA;}
+[A-Za-z] {yylval.strval=strdup(yytext);return LITERA;}
 [A-Za-z]+ {yylval.strval=strdup(yytext);return LITEREE;}
 [0-9]+ {yylval.intval=atoi(yytext);return NR;}
 [ \t] ;
