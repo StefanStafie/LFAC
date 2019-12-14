@@ -1,9 +1,33 @@
-!int<<^Max<-32;
-!string<<^Maxx<-DSA;
-!bool<<^Maxxx<-YES;
-!char<<^Maxxxx<-s;
-^Max<-2;
-^Maxx<-MESTER;
-^Maxxx<-NO;
-^Maxxxx<-b;
+
+
+
+!int<<^Ia<-32;
+!int<<^Ib<-11 +++ 0 --- 1 *** 5 /// 6;
+!int<<^Ic<-11 +++ ^Ia --- 1 *** ^Ia /// ^Ib;
+
+!string<<^Sa<-!strcpy vnfuih;
+!string<<^Sb<-!strcpy ABCD;
+!string<<^Sc;
+^Sc<-!strcpy ^Sa !strcat ^Sb !strcat ^Sb;
+
+
+!bool<<^Ba<-!B YES;
+!bool<<^Bb<-!B NO;
+!bool<<^Bc<-(!B YES) !|| NO;
+!bool<<^Bd<-(!B YES) !&& NO;
+!bool<<^Be<-(!B ^Ia!<^Ib) !&& ^Ba;
+
+!char<<^Ca<-!C s;
+!char<<^Cb<-!C ^Ca;
+
+!float<<^Fa<-!F 123,12;
+!float<<^Fb<-!F 11,5 +++ 0,5 --- 0,1 *** 1,5 /// 2,6;
+!float<<^Fc<-!F ^Fa +++ ^Fb  --- 12,31 *** ^Fa /// ^Fb;
+
+
+
+!string<<^Test<-%sdawsd & sdasd%;
+!string<<^Teste<-%123 & 2312 & asda & dsdw%;
+
+
 

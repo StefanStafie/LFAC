@@ -1,6 +1,7 @@
 %{
 #include <stdio.h>
 #include "y.tab.h"
+#include <stdlib.h>
 /*int yylineno = 0;*/
 %}
 %option noyywrap
@@ -28,6 +29,9 @@ id [a-zA-Z][a-zA-Z0-9]*
 "!definefunction" {return FUN;}
 "<()>" {return APEL;}
 "!const" {return CONSTANT;}
+"!B" {return BOOLCPY;}
+"!C" {return CHARCPY;}
+"!F" {return FLOATCPY;}
 "!strcpy" {return STRCPY;}
 "!strcat" {return STRCAT;}
 "!strlength" {return STRLENGTH;}
