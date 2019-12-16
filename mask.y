@@ -12,7 +12,8 @@ typedef struct expr_info {
 	_Bool boolvalue; //3
 	char charvalue; //4
 	float floatvalue; //5
-	int array[100];
+	int* array; //6
+	int arrayn;
 	int type;
 	char* path;
 } expr_info;
@@ -23,7 +24,9 @@ char* returneaza_tip(int x);
 expr_info* master[100];
 void update_master(expr_info* expr);
 expr_info* returneaza_daca_exista(char* name);
-
+expr_info* create_array_expr(char* name, int value);
+void add_toarray_expr(int value, expr_info* ptr);
+void change_array_name(expr_info* ptr, char* name);
 expr_info* create_int_expr(char* name, int value);
 expr_info* create_str_expr(char* name, char* value1, char* value2);
 expr_info* create_char_expr(char* name, char value);
@@ -53,7 +56,7 @@ struct expr_info** list_expr_ptr;
 %token <charval>LITERA
 %token <expr_ptr>STRCPY STRCAT ID_VAR
 %type <boolval> conditie  lista_conditii conditie_nr booleana
-%type <expr_ptr> declarare atribuire parametru aritmetic_int aritmetic_string aritmetic_char aritmetic_float float_atomic numar caractere array
+%type <expr_ptr> declarare atribuire parametru aritmetic_int aritmetic_string aritmetic_char aritmetic_float float_atomic numar caractere array arrayINT
 
 
 
@@ -95,6 +98,7 @@ atribuire	: ID_VAR '<' '-' aritmetic_int ';'  { $$ = create_int_expr($<strval>1,
 		| ID_VAR '<' '-' lista_conditii ';' {$$ = create_bool_expr($<strval>1, $4);}//booleene
 		| ID_VAR '<' '-' aritmetic_float ';' {$$ = create_float_expr($<strval>1, $4->floatvalue, 0);}//float
 		| ID_VAR '<' '-' '%' array '%' ';' {expr_info* aux; aux = create_str_expr($<strval>1, $5->strvalue, NULL); $$ = aux;}
+		| ID_VAR '<' '-' '#' arrayINT '#' ';' {change_array_name($5,$<strval>1); $$=$5;}
 		;
 lista_atribuiri	: lista_atribuiri atribuire
 		| atribuire
@@ -123,7 +127,9 @@ array	: array '&' aritmetic_int {strcat($1->strvalue, ",");char* s=malloc(sizeof
 	| aritmetic_int {char* s=malloc(sizeof(char*)); ItoS($1->intvalue,s); expr_info* aux; aux = create_str_expr("", s, NULL); $$ = aux;  }
 	| LITEREE  {expr_info* aux; aux = create_str_expr("", $1, NULL); $$ = aux;} 
 	;
-
+arrayINT: arrayINT '*' aritmetic_int {add_toarray_expr($3->intvalue,$1); $$=$1; }
+	 |aritmetic_int{$$=create_array_expr("",$1->intvalue);}
+	;
 
 clauza	: IF_CLAUSE '<' '<' lista_conditii '>' '>' '%' instructiuni '%'
 	| FOR_CLAUSE '<' '<' lista_declarare ';' lista_conditii ';' lista_atribuiri  '>' '>' '%' instructiuni '%'
@@ -282,6 +288,11 @@ void update_master(expr_info* expr){
 			master[i]->boolvalue = expr->boolvalue; //3
 			master[i]->charvalue = expr->charvalue; //4
 			master[i]->floatvalue = expr->floatvalue; //5
+			if(expr->array!=NULL) 
+					{ 
+					master[i]->array= (int * )malloc (sizeof(int)*10);
+					master[i]->array=expr->array; }
+			master[i]->arrayn=expr->arrayn;
 			break;		
 		}
 	}
@@ -299,6 +310,11 @@ void update_master(expr_info* expr){
 				master[i]->boolvalue = expr->boolvalue; //3
 				master[i]->charvalue = expr->charvalue; //4
 				master[i]->floatvalue = expr->floatvalue; //5
+				if(expr->array!=NULL) 
+					{ 
+					master[i]->array= (int * )malloc (sizeof(int)*10);
+					master[i]->array=expr->array; }
+				master[i]->arrayn=expr->arrayn;
 				master[i]->type = expr->type;
 				master[i]->path = expr->path;
 				break;
@@ -318,8 +334,10 @@ void MareaAfisare(){
 					printf("Variabila cu numele %s si tipul bool are valoarea %d\n", master[i]->nume, master[i]->boolvalue);break;
 				case 5:
 					printf("Variabila cu numele %s si tipul float are valoarea %.3f\n", master[i]->nume, master[i]->floatvalue);break;
-				default:
+				case 4:
 					printf("Variabila cu numele %s si tipul char are valoarea %c\n", master[i]->nume, master[i]->charvalue);break;
+				case 6: 
+					printf("Variabila u numele %s si tipul int-array are valoarea: %d",master[i]->nume,master[i]->arrayn); for(int j=1 ; j<=master[i]->arrayn;j++) printf("%d, ",master[i]->array[j]); printf("\n"); break;
 			}		
 		}
 }
@@ -330,6 +348,8 @@ void init(expr_info* ptr){
 	ptr->boolvalue = 0; //3
 	ptr->charvalue = 0; //4
 	ptr->floatvalue = 0; //5
+	ptr->array=NULL; //6
+	ptr->arrayn=0;
 	ptr->type = 0;
 	ptr->path = 0;
 	ptr->path = NULL;
@@ -358,6 +378,32 @@ void ItoS(int a, char* s )
 	}
 
 }
+
+expr_info* create_array_expr(char* name, int value)
+{
+   expr_info* expr = (expr_info*)malloc(sizeof(expr_info));
+   init(expr);
+   expr->array=(int*)malloc(sizeof(int)*10);
+   expr->array[++expr->arrayn] = value;
+   expr->type = 6;
+   expr->nume = (char*) malloc(sizeof(char)*(strlen(name) +1));
+   strcpy(expr->nume, name); 
+   return expr;
+}
+void add_toarray_expr(int value, expr_info* ptr)
+{
+ptr->array[++ptr->arrayn]=value;
+
+}
+void change_array_name(expr_info* ptr, char* name)
+
+{
+ptr->nume=(char*)malloc(sizeof(char)*(strlen(name)+1));
+strcpy(ptr->nume, name); 
+}
+
+
+
 expr_info* returneaza_daca_exista(char* name){
 	for(int i = 0; i<=99; i++){
 		if( master[i] != NULL && strstr(master[i]->nume, name) && strlen(master[i]->nume) == strlen(name)){
@@ -376,8 +422,10 @@ char* returneaza_tip(int x){
 			return "bool";
 		case 5:
 			return "float";
-		default:
+		case 4:
 			return "char";
+		case 6: 
+			return "int-array";
 	}	
 }
 int yyerror(char * s){

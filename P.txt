@@ -5,6 +5,8 @@
 !int<<^Ib<-11 +++ 0 --- 1 *** 5 /// 6;
 !int<<^Ic<-11 +++ ^Ia --- 1 *** ^Ia /// ^Ib;
 
+!int<<^Id<-# 232 * 3221 * 323 #;
+
 !string<<^Sa<-!strcpy vnfuih;
 !string<<^Sb<-!strcpy ABCD;
 !string<<^Sc;
