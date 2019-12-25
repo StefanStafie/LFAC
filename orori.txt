@@ -1,4 +1,4 @@
-//redeclarare
+//redeclarare variabile/functii
 
 !int<<^Ia<-32;
 !int<<^Ia<-32;
@@ -35,6 +35,51 @@
 !bool<<^Ba<-!B ^Bb;
 
 
-// variabila nu a fost declarata inainte de atribuire
+// variabila/functia  nu a fost declarata inainte de atribuire
 
 ^Ia<-32;
+<()> !^Full ; 3 ; 4 ; 4 ; 1 <()>
+!int<<^A<-^Myclass.^Ma;
+
+
+// functia a fost definita cu alt nr de parametri
+
+!definefunction !^Func <(!int<<^Funa<-213; !bool<<^Funb<-!B YES; !string<<^Func;)> %
+	!int<<^Ia<-32;
+	!int<<^Ib<-32;
+%
+<()> !^Func ; 3 ; 4 ; 4 ; 1 <()>
+
+
+// functia a fost definita cu alt tip de parametri
+
+!definefunction !^Func <(!int<<^Funa<-213; !bool<<^Funb<-!B YES; !string<<^Func;)> %
+	!int<<^Ia<-32;
+	!int<<^Ib<-32;
+%
+<()> !^Func ; 3 ; 4 ; 4 <()>
+
+
+// constantele nu se pot modifica
+
+!const !char<<^Cc<-!C a;
+^Cc<-!C x;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

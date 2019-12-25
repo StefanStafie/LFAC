@@ -1,33 +1,64 @@
 
+!definefunction !^Func <(!int<<^Funa; !bool<<^Funb; !string<<^Func;)> %
+	
+	!int<<^Fia<-32;
+	!int<<^Fib<-16;
+	!int<<^Fic<-16;
+%
+!class<<^Myclass#
+	!int<<^Ma;
+	!int<<^Mb;
+	!int<<^Mc;
+	!definefunction !^Init <(!int<<^Funa; !bool<<^Funb; !string<<^Func;)> %
+		!int<<^Ma<-10;
+		!int<<^Mb<-5;
+		!int<<^Mc<-156;
+	%
+# 
 
 
-!int<<^Ia<-32;
-!int<<^Ib<-11 +++ 0 --- 1 *** 5 /// 6;
-!int<<^Ic<-11 +++ ^Ia --- 1 *** ^Ia /// ^Ib;
+!int<<^Ia<-16;
+!int<<^Ib<-32;
+
+!bool<<^Ba<-!B YES;
+!bool<<^Bd<-(!B YES) !&& NO;
+!bool<<^Be<-(!B ^Ia!<^Ib) !&& ^Ba;
+
+!float<<^Fa<-!F 123,12;
+!const !float<<^Fb<-!F 11,5 +++ 0,5 --- 0,1 *** 1,5 /// 2,6;
+!float<<^Fc<-!F ^Fa +++ ^Fb  --- 12,31 *** ^Fa /// ^Fb;
 
 !string<<^Sa<-!strcpy vnfuih;
 !string<<^Sb<-!strcpy ABCD;
 !string<<^Sc;
 ^Sc<-!strcpy ^Sa !strcat ^Sb !strcat ^Sb;
 
-
-!bool<<^Ba<-!B YES;
-!bool<<^Bb<-!B NO;
-!bool<<^Bc<-(!B YES) !|| NO;
-!bool<<^Bd<-(!B YES) !&& NO;
-!bool<<^Be<-(!B ^Ia!<^Ib) !&& ^Ba;
-
 !char<<^Ca<-!C s;
-!char<<^Cb<-!C ^Ca;
+!const !char<<^Cc<-!C ^Ca;
+!char<<^Cd<-!C ^Sa[3];
 
-!float<<^Fa<-!F 123,12;
-!float<<^Fb<-!F 11,5 +++ 0,5 --- 0,1 *** 1,5 /// 2,6;
-!float<<^Fc<-!F ^Fa +++ ^Fb  --- 12,31 *** ^Fa /// ^Fb;
+!for<<;!B ^Ia !> ^Ib ;>>%
+	^Ia<-^Myclass.^Ma+++ 2;
+	!while<<!B NO>>%
+		^Ia<-^Ia +++ 2;
+		!for<<!int<<^Abc;;!B ^Ia !> ^Ib ;>>%
+			^Ia<-^Ia +++ 2;
+		%
+		!if<<!B YES>>%
+			^Ia<-5;
+		%
+		!for<<;!B ^Ia !> ^Ib ; ^Ia<- ^Ia +++ 1;>>%
+			^Ia<-^Ia +++ 2;
+			!for<<!int<<^Abc;;!B ^Ia !> ^Ib ; ^Ia<- ^Ia +++ 1;>>%
+				^Ia<-^Ia +++ 2;
+			%
+		%
+	%
+%
 
-
-
-!string<<^Test<-%sdawsd & sdasd%;
-!string<<^Teste<-%123 & 2312 & asda & dsdw%;
+!int<<^Iexpresie<- ^Ia/// 4 *** 5,5 --- ^Myclass.^Ma +++ ^Myclass.^Init *** <()>!^Func; 12 +++ ^Ia; (((!B YES) !|| NO) !&& ^Ia !> ^Ib) !&& ^Ba ;!strcpy ^Sa !strcat ^Sb !strcat ^Sb<()>;
+!Eval ^Iexpresie;
+!Eval ^Ia/// 4 *** 5,5 --- ^Myclass.^Ma +++ ^Myclass.^Init *** <()>!^Func; 12 +++ ^Ia; (((!B YES) !|| NO) !&& ^Ia !> ^Ib) !&& ^Ba ;!strcpy DFASDFSDfas<()>;
 
 
 

@@ -1,0 +1,65 @@
+!definefunction !^Func <(!int<<^Funa<-213; !bool<<^Funb<-!B YES; !string<<^Func;)> %
+
+	!int<<^Ia<-32;
+	!int<<^Ib<-11 +++ 0 --- 1 *** 5 /// 6;
+
+%
+
+
+
+
+DACA O VARIABILA NU ARE O VALOARE ATRIBUITA, ARE IMPLICIT 0 SAU a    ;
+
+!int<<^Aa; ---------------------------------int Aa;
+
+!int<<^Id<-# 232 * 3221 * 323 #;---------------------------------int Id = {232, 3221, 323}
+^Id[1]<-10; ---------------------------------Id[1] = 10;
+
+!string<<^Test<-%sdawsd & sdasd%;  --------------------------------- 
+!string<<^Teste<-%123 & 2312 & asda & dsdw%; ---------------------------------
+
+!int<<^Ic<-11 +++ ^Ia --- 1 *** ^Ia /// ^Ib; --------------------------------- int Ic=11+Ia-1*Ia/Ib;
+
+!string<<^Sa<-!strcpy vnfuih;---------------------------------char Sa[100]; strcpy(Sa,"vnfuih");
+!string<<^Sb<-!strcpy ABCD;---------------------------------char Sb[100]; strcpy(Sa,"ABCD");
+!string<<^Sc;;---------------------------------char Sc[100];
+^Sc<-!strcpy ^Sa !strcat ^Sb !strcat ^Sb; ---------------------------------strcpy(Sc, Sa); strcat(Sc,Sb); strcat(Sc,Sb);
+
+
+!bool<<^Ba<-!B YES; --------------------------------------------bool Ba = true;
+!bool<<^Bb<-!B NO;-------------------------------------------- bool Bb = false;
+!bool<<^Bc<-(!B YES) !|| NO; --------------------------------------------bool Bc = true || false;
+!bool<<^Bd<-(!B YES) !&& NO;  --------------------------------------------bool Bc = true && false;
+!bool<<^Be<-(!B ^Ia!<^Ib) !&& ^Ba;  --------------------------------------------bool Bc = Ia<Ib && Ba;
+
+!char<<^Ca<-!C s;  ------------------------------------------- char Ca = 's';
+!char<<^Cb<-!C ^Ca; ------------------------------------------- char Cb = Ca;
+
+!float<<^Fa<-!F 123,12; ------------------------------------------- float Fa = 123,12;
+!float<<^Fb<-!F 11,5 +++ 0,5 --- 0,1 *** 1,5 /// 2,6; ------------------------------------------- float Fb = 11,5 + 0,5 - 0,1 * 1,5 / 2,6;
+!float<<^Fc<-!F ^Fa +++ ^Fb  --- 12,31 *** ^Fa /// ^Fb; ------------------------------------------- float Fa = Fa+Fb012,32*Fa/Fb;
+
+!int<<^In<- <()> !strlength !strcpy ^Sa <()>; ---------------------------------------------int In = strlen(Sa);
+
+Functie ; !strcpy ^Sa !strcat ^Sb !strcat ^Sb; 11 +++ ^Ia *** ^Ia *** <()>!^Func ; 3 ;5 ;7 <()>  <()> 
+
+
+!const !int<<^Ic<-11 +++ ^Ia --- 1 *** ^Ia *** <()>!^Func ; 3 ;5 ;7 <()>;
+
+!class<<^Mae#      /*creare clasa*/
+	!int<<^Mar<-323;
+#
+
+
+
+
+
+
+
+
+
+
+
+
+
+

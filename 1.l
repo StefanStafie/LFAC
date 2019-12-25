@@ -8,6 +8,7 @@
 id [a-zA-Z][a-zA-Z0-9]*
 %%
 "/*"(.|\n\r)+"*/" ;
+"!Eval" {yylval.intval=0; return EVAL;}
 "!int" {yylval.intval=1; return TIP_INT;}
 "!float" {yylval.intval=5;return TIP_FLOAT;}
 "!char" {yylval.intval=4;return TIP_CHAR;}
@@ -42,5 +43,5 @@ id [a-zA-Z][a-zA-Z0-9]*
 [A-Za-z]+ {yylval.strval=strdup(yytext);return LITEREE;}
 [0-9]+ {yylval.intval=atoi(yytext);return NR;}
 [ \t] ;
-\r\n {yylineno++;}
+(\r|\n|\r\n) {yylineno++;}
 . {return yytext[0];}
